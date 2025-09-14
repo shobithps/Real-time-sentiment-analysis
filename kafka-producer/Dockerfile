@@ -1,0 +1,11 @@
+From python:3.8-slim
+COPY requirements.txt .
+RUN set -ex; \
+    pip install --no-cache-dir -r requirements.txt
+
+WORKDIR /
+COPY wait-for-it.sh wait-for-it.sh
+
+ADD python-producer.py .
+
+CMD ./wait-for-it.sh -s -t 90 $ZOOKEEPER_SERVER -- ./wait-for-it.sh -s -t 90 $KAFKA_SERVER -- python -u python-producer.py
